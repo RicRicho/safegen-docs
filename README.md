@@ -1,2 +1,4 @@
-# safegen-docs
-Public documentation for SafeGen (API, setup, usage)
+# SafeGen Documentation
+
+Welcome to the official documentation for SafeGen.
+
