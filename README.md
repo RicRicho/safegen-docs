@@ -7,6 +7,7 @@ Welcome to SafeGen’s public documentation.
 - [Overview](#overview)
 - [API Reference](#api-reference)
 - [Setup Guide](#setup-guide)
+- [CarbonKilos Data Room](dataroom/carbonkilos/README.md)
 
 ## Overview
 
