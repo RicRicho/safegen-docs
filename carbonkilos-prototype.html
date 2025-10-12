@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CarbonKilos Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --identity-bg: linear-gradient(135deg, #d8f3dc, #95d5b2);
+        --identity-card: rgba(255, 255, 255, 0.9);
+        --explorer-bg: radial-gradient(circle at top left, #dfe7fd, #97a0e6);
+        --explorer-card: rgba(18, 26, 67, 0.92);
+        --wallet-bg: linear-gradient(120deg, #1b1f3b, #111);
+        --wallet-card: rgba(19, 21, 38, 0.88);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #101322;
+        color: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        padding: 1.25rem 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        background: #0b1524;
+        color: #f8fafc;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+      }
+
+      header h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        font-size: clamp(1.4rem, 2vw, 1.9rem);
+        letter-spacing: 0.02em;
+      }
+
+      header p {
+        margin: 0.35rem 0 0;
+        font-size: 0.95rem;
+        max-width: 40rem;
+        color: rgba(241, 245, 249, 0.8);
+      }
+
+      nav {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+      }
+
+      nav button {
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: rgba(15, 23, 42, 0.7);
+        color: #f1f5f9;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      }
+
+      nav button:hover,
+      nav button:focus {
+        transform: translateY(-1px);
+        border-color: #38bdf8;
+        outline: none;
+      }
+
+      nav button.active {
+        background: #38bdf8;
+        color: #0f172a;
+        border-color: transparent;
+      }
+
+      main {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        padding: clamp(2rem, 5vw, 4rem);
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(8%);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+      }
+
+      .screen.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .identity {
+        background: var(--identity-bg);
+        color: #064e3b;
+      }
+
+      .identity-card {
+        background: var(--identity-card);
+        border-radius: 1.5rem;
+        padding: clamp(2rem, 4vw, 3.5rem);
+        max-width: 60rem;
+        width: min(90%, 900px);
+        display: grid;
+        gap: 1.5rem;
+        box-shadow: 0 25px 65px rgba(22, 101, 52, 0.22);
+      }
+
+      .identity-card h2 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        font-family: 'Space Grotesk', sans-serif;
+        color: #065f46;
+      }
+
+      .credential-metadata {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .chip {
+        background: rgba(22, 163, 74, 0.12);
+        color: #047857;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.01em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .chip svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .identity-card a {
+        color: #0d9488;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .identity-card a:hover {
+        text-decoration: underline;
+      }
+
+      .explorer {
+        background: var(--explorer-bg);
+        color: #e2e8f0;
+      }
+
+      .explorer-card {
+        background: var(--explorer-card);
+        border-radius: 1.25rem;
+        padding: clamp(2rem, 4vw, 3.5rem);
+        max-width: 70rem;
+        width: min(92%, 980px);
+        display: grid;
+        gap: 1.4rem;
+        box-shadow: 0 18px 55px rgba(14, 22, 65, 0.6);
+      }
+
+      .explorer-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: baseline;
+      }
+
+      .explorer-header h2 {
+        margin: 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(1.9rem, 3vw, 2.5rem);
+      }
+
+      .rating {
+        padding: 0.6rem 1.1rem;
+        border-radius: 0.75rem;
+        background: rgba(56, 189, 248, 0.15);
+        color: #bae6fd;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        font-size: 0.95rem;
+      }
+
+      .explorer-grid {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      }
+
+      .explorer-card section {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 1rem;
+        padding: 1.1rem 1.25rem;
+        border: 1px solid rgba(99, 102, 241, 0.25);
+      }
+
+      .explorer-card h3 {
+        margin-top: 0;
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #c7d2fe;
+      }
+
+      .explorer-card p,
+      .explorer-card li {
+        margin: 0.35rem 0;
+        color: rgba(226, 232, 240, 0.85);
+        line-height: 1.6;
+      }
+
+      .wallet {
+        background: var(--wallet-bg);
+        color: #e2e8f0;
+      }
+
+      .wallet-card {
+        background: var(--wallet-card);
+        border-radius: 1.35rem;
+        padding: clamp(2rem, 4vw, 3.5rem);
+        max-width: 72rem;
+        width: min(94%, 960px);
+        display: grid;
+        gap: 2rem;
+        box-shadow: 0 35px 70px rgba(8, 11, 28, 0.7);
+      }
+
+      .wallet-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: baseline;
+      }
+
+      .wallet-top h2 {
+        margin: 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 3vw, 2.6rem);
+      }
+
+      .asset-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+
+      .asset {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 1rem;
+        padding: 1.1rem 1.3rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      .asset h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1.1rem;
+      }
+
+      .asset span {
+        display: block;
+        font-size: 0.95rem;
+        color: rgba(226, 232, 240, 0.75);
+      }
+
+      .carbon-section {
+        background: rgba(45, 212, 191, 0.08);
+        border: 1px solid rgba(20, 184, 166, 0.35);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      .carbon-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .carbon-top h3 {
+        margin: 0;
+        font-size: 1.35rem;
+      }
+
+      .carbon-metadata {
+        display: grid;
+        gap: 0.8rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .retire-btn {
+        justify-self: start;
+        background: linear-gradient(120deg, #22d3ee, #0ea5e9);
+        color: #0f172a;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .retire-btn:hover,
+      .retire-btn:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 25px rgba(14, 165, 233, 0.35);
+        outline: none;
+      }
+
+      footer {
+        padding: 1.2rem 2rem;
+        background: #0b1524;
+        color: rgba(148, 163, 184, 0.85);
+        font-size: 0.85rem;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 1.25rem;
+        }
+
+        nav {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .screen {
+          padding: 1.75rem;
+        }
+
+        .identity-card,
+        .explorer-card,
+        .wallet-card {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>CarbonKilos Credential to Retirement Flow</h1>
+        <p>
+          Prototype journey showing how CarbonKilos' verified offset credits move from a W3C-compliant identity wallet, through
+          on-chain attestation, to retirement in a multi-asset crypto wallet.
+        </p>
+      </div>
+      <nav>
+        <button class="active" data-screen="identity">Identity Wallet</button>
+        <button data-screen="explorer">Blockchain Explorer</button>
+        <button data-screen="wallet">Crypto Wallet</button>
+      </nav>
+    </header>
+    <main>
+      <section class="screen identity active" id="identity">
+        <article class="identity-card">
+          <div>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1l3 5.2 6 .9-4.5 4.3 1.1 6-5.6-3-5.6 3 1.1-6L3 7.1l6-.9L12 1z" />
+              </svg>
+              Verified Credential
+            </span>
+            <h2>CarbonKilos Offset Credential</h2>
+            <p>
+              Digitally issued by CarbonKilos' assurance module with ISO 14044-aligned audit evidence and chain-of-custody logs,
+              ready for enterprise procurement teams to action.
+            </p>
+          </div>
+          <div class="credential-metadata">
+            <div>
+              <h3>Credential Holder</h3>
+              <p>NordicSteel Sustainability Lead</p>
+              <p>ID: did:ck:6f90:ns-4582</p>
+            </div>
+            <div>
+              <h3>Credit Details</h3>
+              <p>Type: Verified Carbon Unit (CarbonKilos Market)</p>
+              <p>Vintage: 2024 &middot; Batch: CCUS-Delta-142</p>
+            </div>
+            <div>
+              <h3>Emission Impact</h3>
+              <p>Retire-ready volume: 10,000 kg CO<sub>2</sub>e</p>
+              <p>Baseline reduction modeled via Carbon Twin Engine</p>
+            </div>
+            <div>
+              <h3>Assurance</h3>
+              <p>PCAF aligned &middot; CSRD evidence packet attached</p>
+              <p>Audited by third-party verifier: TerraMetrics</p>
+            </div>
+          </div>
+          <div>
+            <p>
+              Credential payload includes supplier impact scores, transport modal shifts, and automated reporting hooks for CDP
+              and GRI filings.
+            </p>
+            <a href="#explorer" data-screen="explorer" class="link-forward">View on CarbonLedger Explorer &rarr;</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="screen explorer" id="explorer">
+        <article class="explorer-card">
+          <header class="explorer-header">
+            <div>
+              <h2>CarbonLedger Explorer</h2>
+              <p>Transaction hash 0x4f9a...b72 confirms on-chain registration of the CarbonKilos credit package.</p>
+            </div>
+            <span class="rating">Rating: AAA</span>
+          </header>
+          <section>
+            <h3>Block Details</h3>
+            <p>Block Height: 12,874,223</p>
+            <p>Timestamp: 2024-04-18 14:52 UTC</p>
+            <p>Validator: CK-Mainnet-EU-03</p>
+          </section>
+          <div class="explorer-grid">
+            <section>
+              <h3>Credential Proof</h3>
+              <p>Verifiable credential hash: 0x9ab4...dd21</p>
+              <p>Issuer DID: did:ck:root:assurance</p>
+              <p>Integrity: ISO 14044 attestation</p>
+            </section>
+            <section>
+              <h3>Carbon Metrics</h3>
+              <p>Total volume: 10,000 kg CO<sub>2</sub>e</p>
+              <p>Project: Direct Air Capture &amp; Mineralization</p>
+              <p>Supplier ledger score: 94 / 100</p>
+            </section>
+            <section>
+              <h3>Quality Signals</h3>
+              <ul>
+                <li>Double-counting safeguards validated</li>
+                <li>Lifecycle evidence stored for audit readiness</li>
+                <li>Marketplace retirements to date: 320,000 credits</li>
+              </ul>
+            </section>
+          </div>
+          <footer>
+            <p>
+              Next step: send proof to your custody wallet to prep retirement, or jump back to the identity wallet for additional
+              credentials.
+            </p>
+            <a href="#wallet" data-screen="wallet" class="link-forward">Open Multi-Asset Wallet &rarr;</a>
+          </footer>
+        </article>
+      </section>
+
+      <section class="screen wallet" id="wallet">
+        <article class="wallet-card">
+          <div class="wallet-top">
+            <div>
+              <h2>Atlas Custody Wallet</h2>
+              <p>Multi-chain balance overview with CarbonKilos credits ready for retirement.</p>
+            </div>
+            <span class="chip" style="background: rgba(59, 130, 246, 0.2); color: #93c5fd;">
+              Portfolio coverage &mdash; 68% net-zero aligned
+            </span>
+          </div>
+          <section class="asset-grid">
+            <div class="asset">
+              <h3>Bitcoin</h3>
+              <span>2.45 BTC</span>
+              <span>Network: Lightning Custody</span>
+            </div>
+            <div class="asset">
+              <h3>Ethereum</h3>
+              <span>48.2 ETH</span>
+              <span>Network: zkRollup Vault</span>
+            </div>
+            <div class="asset">
+              <h3>USDC</h3>
+              <span>125,000 USDC</span>
+              <span>Network: Polygon</span>
+            </div>
+          </section>
+          <section class="carbon-section">
+            <div class="carbon-top">
+              <h3>CarbonKilos Credits</h3>
+              <span class="rating" style="background: rgba(34, 197, 94, 0.18); color: #bbf7d0;">On-chain: Verified</span>
+            </div>
+            <div class="carbon-metadata">
+              <div>
+                <h4>Balance</h4>
+                <p>10,000 kg CO<sub>2</sub>e &middot; Batch CCUS-Delta-142</p>
+              </div>
+              <div>
+                <h4>Readiness</h4>
+                <p>Audit pack synced &middot; CSRD reporting hooks active</p>
+              </div>
+              <div>
+                <h4>Impact Plan</h4>
+                <p>Supports 22% emissions reduction target for NordicSteel lanes</p>
+              </div>
+              <div>
+                <h4>Retirement Path</h4>
+                <p>Assign to GreenLine Logistics shipment bundle #2801</p>
+              </div>
+            </div>
+            <button class="retire-btn">Retire Credits Now</button>
+            <p>
+              Retiring triggers CarbonKilos automation: supplier rebates, Scope 3 reporting updates, and notifications to finance,
+              procurement, and customer success teams.
+            </p>
+          </section>
+          <footer>
+            <p>
+              Need more? Explore reduction playbooks or purchase additional high-quality offsets via the CarbonKilos marketplace.
+            </p>
+          </footer>
+        </article>
+      </section>
+    </main>
+    <footer>
+      CarbonKilos prototype &middot; Data sources: Carbon Twin Engine, Supplier Impact Ledger, and Marketplace Integrations.
+    </footer>
+    <script>
+      const buttons = document.querySelectorAll('nav button, .link-forward');
+      const screens = document.querySelectorAll('.screen');
+
+      function activateScreen(targetId) {
+        screens.forEach((screen) => {
+          screen.classList.toggle('active', screen.id === targetId);
+        });
+        document.querySelectorAll('nav button').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.screen === targetId);
+        });
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+          const target = event.currentTarget.dataset.screen || event.currentTarget.getAttribute('href').slice(1);
+          if (target) {
+            event.preventDefault();
+            activateScreen(target);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
