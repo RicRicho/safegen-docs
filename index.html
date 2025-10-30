@@ -1,19 +1,632 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SafeGen Docs</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SafeGen | Age-Aware Internet Access</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fb;
+        --surface: #ffffff;
+        --primary: #2f5bea;
+        --primary-dark: #1f3fc2;
+        --accent: #46c3ad;
+        --text: #161b2c;
+        --muted: #5b6173;
+        --border: #d9deed;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', sans-serif;
+        background: linear-gradient(180deg, #f8faff 0%, #eef2fb 100%);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(8px);
+        background-color: rgba(255, 255, 255, 0.8);
+        border-bottom: 1px solid rgba(217, 222, 237, 0.7);
+      }
+
+      .nav {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      .logo-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), #67a5ff);
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus {
+        color: var(--primary);
+      }
+
+      .container {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+      }
+
+      .hero {
+        display: grid;
+        gap: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: center;
+        padding-top: 4rem;
+        padding-bottom: 3rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        margin-bottom: 1.25rem;
+        line-height: 1.1;
+      }
+
+      .hero p {
+        font-size: 1.125rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 999px;
+        padding: 0.9rem 1.8rem;
+        font-weight: 600;
+        transition: transform 0.2s ease, box-shadow 0.2s ease,
+          background-color 0.2s ease;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(47, 91, 234, 0.25);
+      }
+
+      .btn-primary:hover,
+      .btn-primary:focus {
+        transform: translateY(-2px);
+        background: var(--primary-dark);
+        box-shadow: 0 16px 36px rgba(31, 63, 194, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(70, 195, 173, 0.12);
+        color: var(--primary);
+      }
+
+      .btn-secondary:hover,
+      .btn-secondary:focus {
+        transform: translateY(-2px);
+        background: rgba(70, 195, 173, 0.22);
+      }
+
+      .hero-card {
+        background: var(--surface);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(31, 63, 194, 0.12);
+        padding: 2rem;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .hero-metric {
+        display: grid;
+        gap: 0.25rem;
+      }
+
+      .hero-metric span:first-child {
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .hero-metric strong {
+        font-size: 1.8rem;
+        color: var(--primary);
+      }
+
+      section {
+        padding: 4rem 0;
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .section-subtitle {
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto 3rem;
+        color: var(--muted);
+      }
+
+      .feature-grid {
+        display: grid;
+        gap: 1.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .feature-card {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border);
+        display: grid;
+        gap: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .feature-card:hover,
+      .feature-card:focus-within {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 38px rgba(31, 63, 194, 0.12);
+      }
+
+      .feature-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(47, 91, 234, 0.1);
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .split {
+        display: grid;
+        gap: 2.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: center;
+      }
+
+      .card-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 1.75rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary);
+        background: rgba(47, 91, 234, 0.1);
+        border-radius: 999px;
+        padding: 0.3rem 0.9rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .stat-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin-top: 2rem;
+      }
+
+      .stat-card {
+        background: rgba(47, 91, 234, 0.08);
+        border-radius: 20px;
+        padding: 1.75rem;
+      }
+
+      .stat-card strong {
+        display: block;
+        font-size: 2rem;
+        color: var(--primary);
+      }
+
+      .list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.75rem;
+        color: var(--muted);
+      }
+
+      .testimonial {
+        background: var(--surface);
+        border-radius: 24px;
+        padding: 2.25rem;
+        border: 1px solid var(--border);
+        box-shadow: 0 24px 48px rgba(22, 27, 44, 0.08);
+        max-width: 720px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      blockquote {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .quote-author {
+        margin-top: 1.5rem;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .cta {
+        background: linear-gradient(135deg, #2f5bea, #46c3ad);
+        border-radius: 32px;
+        color: #fff;
+        text-align: center;
+        padding: 3.5rem 2rem;
+        display: grid;
+        gap: 1.25rem;
+        box-shadow: 0 24px 60px rgba(47, 91, 234, 0.35);
+      }
+
+      .cta p {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      footer {
+        padding: 3rem 1.5rem;
+        background: #0f172a;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .footer-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .footer-links a:hover,
+      .footer-links a:focus {
+        color: #fff;
+      }
+
+      @media (max-width: 720px) {
+        .nav-links {
+          display: none;
+        }
+
+        .container {
+          padding: 3.5rem 1.25rem;
+        }
+
+        header {
+          position: static;
+          background: transparent;
+          border: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app">Loading...</div>
+    <header>
+      <nav class="nav">
+        <div class="logo">
+          <span class="logo-mark">SG</span>
+          SafeGen
+        </div>
+        <div class="nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#compliance">Compliance</a>
+          <a href="#partners">Partners</a>
+          <a href="#resources">Resources</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container hero">
+        <div>
+          <span class="badge">Age-Aware Access for the Modern Web</span>
+          <h1>
+            Build trust with an internet that knows the difference between kids
+            and adults.
+          </h1>
+          <p>
+            SafeGen delivers turnkey age verification, content filtering, and
+            guardian oversight so platforms can launch responsibly and stay
+            compliant across jurisdictions.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#contact">Request a demo</a>
+            <a class="btn btn-secondary" href="README.md">Explore docs</a>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="SafeGen impact highlights">
+          <div class="hero-metric">
+            <span>Verified Profiles</span>
+            <strong>4.2M+</strong>
+            <p class="muted">
+              Federated identity gateway ensures real users without friction.
+            </p>
+          </div>
+          <div class="hero-metric">
+            <span>Policy Coverage</span>
+            <strong>27 regions</strong>
+            <p class="muted">
+              Automated rule library maps to COPPA, AADC, and EU DSA updates.
+            </p>
+          </div>
+          <div class="hero-metric">
+            <span>Content Decisions</span>
+            <strong>58B / year</strong>
+            <p class="muted">
+              AI moderation pipeline scores media in under 50ms per request.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section id="platform">
+        <div class="container">
+          <h2 class="section-title">A safe foundation for every interaction</h2>
+          <p class="section-subtitle">
+            Modular services plug into your sign-up flow, session management, and
+            content surfaces without forcing a full replatform.
+          </p>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">1</div>
+              <h3>Identity Signals</h3>
+              <p>
+                Multi-factor age assurance blends government IDs, credit bureau
+                data, device biometrics, and guardian attestations.
+              </p>
+              <ul class="list">
+                <li>Zero-retention verification tokens</li>
+                <li>Privacy preserving cryptographic proofs</li>
+                <li>Dynamic risk scoring for repeat visits</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">2</div>
+              <h3>Contextual Controls</h3>
+              <p>
+                Content filters adapt to age band, locale, and parental
+                preferences with machine-learning guardrails tuned to your
+                vertical.
+              </p>
+              <ul class="list">
+                <li>Real-time language and media analysis</li>
+                <li>Safety tiers mapped to regulatory regimes</li>
+                <li>Guardian dashboards and alerts</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">3</div>
+              <h3>Compliance Automation</h3>
+              <p>
+                Policy engine keeps audit trails, DPIAs, and breach response run
+                books in sync with the latest global regulations.
+              </p>
+              <ul class="list">
+                <li>Jurisdiction-aware policy templates</li>
+                <li>Evidence capture API for auditors</li>
+                <li>Automated DPIA and risk assessments</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="compliance">
+        <div class="container split">
+          <div>
+            <span class="badge">Compliance ready</span>
+            <h2>Designed for fast-moving regulations</h2>
+            <p>
+              SafeGen monitors and codifies international policy updates so your
+              legal team can focus on strategy, not spreadsheets.
+            </p>
+            <ul class="list">
+              <li>Automated audit reports exportable to CSV or PDF</li>
+              <li>Data residency controls for multi-region deployments</li>
+              <li>Granular consent management with immutable logs</li>
+            </ul>
+          </div>
+          <div class="card-list">
+            <article class="card">
+              <h3>Built for regulators</h3>
+              <p>
+                Instant policy mappings reference the latest text from COPPA,
+                UK AADC, GDPR, and California Age-Appropriate Design Code.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Enterprise-scale security</h3>
+              <p>
+                Zero trust network segmentation, SOC 2 Type II controls, and
+                continuous pen testing keep data protected end-to-end.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Transparent governance</h3>
+              <p>
+                Share reviewer dashboards with regulators, parents, and
+                auditors through granular access policies.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="partners">
+        <div class="container">
+          <h2 class="section-title">Trusted by platforms, regulators, and parents</h2>
+          <p class="section-subtitle">
+            SafeGen works with leading media networks, gaming studios, edtech
+            platforms, and telecom operators to protect young audiences without
+            slowing product velocity.
+          </p>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <strong>99.98%</strong>
+              uptime across global edge regions.
+            </div>
+            <div class="stat-card">
+              <strong>45%</strong>
+              reduction in manual moderation workload.
+            </div>
+            <div class="stat-card">
+              <strong>12 weeks</strong>
+              average time to regulatory readiness.
+            </div>
+            <div class="stat-card">
+              <strong>3x</strong>
+              increase in guardian satisfaction scores.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="resources">
+        <div class="container">
+          <div class="testimonial">
+            <blockquote>
+              “SafeGen helped us launch in Europe with confidence. Their DPIA
+              automation and guardian-first UX reduced the approval cycle from
+              months to weeks.”
+            </blockquote>
+            <div class="quote-author">Chief Trust Officer, Global Gaming Studio</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="container">
+          <div class="cta">
+            <h2>Ready to protect your community?</h2>
+            <p>
+              Connect with our trust &amp; safety specialists for a walkthrough of
+              SafeGen’s APIs, dashboard, and integration playbooks.
+            </p>
+            <div class="hero-cta" style="justify-content: center">
+              <a class="btn btn-primary" href="mailto:hello@safegen.ai">
+                Talk to sales
+              </a>
+              <a class="btn btn-secondary" href="dataroom/carbonkilos/README.md">
+                Visit investor data room
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div>© <span id="year"></span> SafeGen. All rights reserved.</div>
+        <div class="footer-links">
+          <a href="README.md">Documentation</a>
+          <a href="dataroom/carbonkilos/README.md">Investor Data Room</a>
+          <a href="mailto:privacy@safegen.ai">Privacy</a>
+          <a href="mailto:security@safegen.ai">Security</a>
+        </div>
+      </div>
+    </footer>
+
     <script>
-      window.$docsify = {
-        name: 'SafeGen Docs',
-        repo: '',
-      }
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (event) => {
+          const targetId = anchor.getAttribute('href').slice(1);
+          const target = document.getElementById(targetId);
+          if (target) {
+            event.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
     </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   </body>
 </html>
