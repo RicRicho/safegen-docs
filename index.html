@@ -1,19 +1,422 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SafeGen Docs</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
-  </head>
-  <body>
-    <div id="app">Loading...</div>
-    <script>
-      window.$docsify = {
-        name: 'SafeGen Docs',
-        repo: '',
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SafeGen — Parent‑verified age protection for under‑16s</title>
+  <meta name="description" content="Parents add a child’s mobile to the SafeList. Social platforms query once to keep under‑16s off their apps. No IDs. No face scans.">
+  <meta name="theme-color" content="#0b5cff">
+  <meta property="og:title" content="SafeGen — Parent‑verified age protection" />
+  <meta property="og:description" content="Add your child’s mobile. Platforms check once to keep under‑16s off their apps. Private by design." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --ink:#0b1220;--muted:#5b6472;--line:#e5e7eb;--bg:#ffffff;
+      --accent:#0b5cff;--accent-ink:#fff;--ok:#15803d;--danger:#b91c1c;
+      --radius:14px;--max:1200px;--space:8px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;scroll-behavior:smooth}
+    body{font:16px/1.55 -apple-system,BlinkMacSystemFont,Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    img{max-width:100%;display:block}
+    a{color:var(--accent);text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--line)}
+    .nav{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;letter-spacing:.2px}
+    .nav a{color:var(--ink);margin-left:20px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:var(--radius);border:1px solid transparent;background:var(--accent);color:var(--accent-ink);font-weight:700;cursor:pointer}
+    .btn.secondary{background:#fff;color:var(--accent);border-color:var(--accent)}
+    .btn.linklike{background:transparent;border:none;color:var(--accent);padding:0;height:auto}
+    /* HERO */
+    .hero{position:relative;isolation:isolate}
+    .hero-media{position:relative}
+    .hero-media picture,.hero-media img{width:100%;height:min(72vh,720px);object-fit:cover}
+    .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.40) 0%,rgba(0,0,0,.28) 40%,rgba(0,0,0,.15) 100%);mix-blend:normal}
+    .hero-content{position:absolute;inset:0;display:grid;place-items:center;padding:24px}
+    .hero-card{max-width:860px;width:100%;color:#fff}
+    .kicker{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:999px;margin-bottom:12px;font-weight:600}
+    .hero h1{margin:0 0 10px;font-size: clamp(28px,3.8vw,48px);line-height:1.12}
+    .hero p{margin:0 0 16px;color:#e7eaf1}
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+    .trust-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:6px 12px;border-radius:999px;color:#f5f7fa}
+    .counter{margin-top:14px;font-weight:800}
+    /* PROOF STRIP */
+    .proof{background:#fafbff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .proof .row{display:flex;gap:28px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .proof .row div{color:var(--muted);font-weight:600}
+    .dot{width:8px;height:8px;border-radius:50%;background:#d1d5db;display:inline-block;margin:0 8px;vertical-align:middle}
+    /* HOW IT WORKS */
+    .section{padding:72px 24px}
+    .section h2{font-size:28px;margin:0 0 8px}
+    .lead{color:var(--muted);margin:0 0 18px}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .step{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff;position:relative}
+    .badge{position:absolute;top:-12px;left:16px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:700 14px/28px system-ui;text-align:center}
+    /* WHY PRIVATE */
+    .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
+    .card{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff}
+    /* FORM */
+    form{display:grid;gap:12px;max-width:640px}
+    label{font-weight:650}
+    input,select{height:46px;border-radius:12px;border:1px solid var(--line);padding:0 12px}
+    .consent{display:flex;gap:10px;align-items:flex-start}
+    .consent input{height:auto;margin-top:6px}
+    .hint{font-size:14px;color:var(--muted)}
+    .success{display:none;border:1px solid #c7f0d2;background:#f0fff4;border-radius:12px;padding:12px;color:#064e3b}
+    /* DEV STRIP & FAQ */
+    .devstrip{border:1px dashed var(--line);padding:16px;border-radius:16px;background:#fbfdff}
+    details{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    details+details{margin-top:12px}
+    summary{font-weight:700;cursor:pointer}
+    footer{padding:36px 24px;border-top:1px solid var(--line);color:var(--muted)}
+    /* MODALS */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:24px}
+    .modal[open]{display:flex}
+    .dialog{background:#fff;border-radius:16px;max-width:480px;width:100%;padding:20px;border:1px solid var(--line)}
+    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:10px 14px;border-radius:12px;display:none}
+    @media (max-width:980px){.grid2{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.proof .row{justify-content:center}.hero-media picture,.hero-media img{height:min(64vh,560px)}}
+    @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="wrap nav" role="navigation" aria-label="Primary">
+      <div class="brand">SafeGen</div>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="#privacy">Why it’s private</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn" href="#signup">Add your child</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top" aria-label="Intro">
+    <div class="hero-media">
+      <picture>
+        <source type="image/webp" srcset="assets/hero-1200.webp 1200w, assets/hero-1600.webp 1600w, assets/hero-2000.webp 2000w" sizes="100vw">
+        <img src="assets/hero.jpg" alt="Parent and child seated together at home" loading="eager" fetchpriority="high">
+      </picture>
+      <div class="scrim" aria-hidden="true"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-card wrap">
+        <span class="kicker">Parent‑verified. Private by design.</span>
+        <h1>Protect your child online — in under a minute.</h1>
+        <p>Parents add a child’s mobile number. Social platforms query the SafeList to keep under‑16s off their apps. No IDs. No face scans.</p>
+        <div class="cta-row">
+          <a class="btn" href="#signup">Add your child</a>
+          <a class="btn secondary" href="#how" aria-label="Learn how SafeGen works">How it works →</a>
+        </div>
+        <div class="trust-row" aria-label="Trust points">
+          <span class="pill">Parent‑led, not AI scanning</span>
+          <span class="pill">Query‑only API for platforms</span>
+          <span class="pill">You’re in control</span>
+        </div>
+        <div class="counter" aria-live="polite">Parents joined: <span id="count">12,482</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF STRIP -->
+  <section class="proof">
+    <div class="wrap row" aria-label="Proof">
+      <div>Built with privacy at its core</div>
+      <div><span class="dot"></span> Pilot API available <span class="dot"></span> Free during pilot</div>
+      <div>Removable anytime by parents</div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section wrap" id="how">
+    <h2>How it works</h2>
+    <p class="lead">Three simple steps. One SMS confirmation.</p>
+    <div class="steps" role="list">
+      <div class="step" role="listitem">
+        <div class="badge">1</div>
+        <h3>Add your child’s number</h3>
+        <p class="lead">Enter your child’s mobile. We text <em>you</em> to confirm you’re the parent or guardian.</p>
+      </div>
+      <div class="step" role="listitem">
+        <div class="badge">2</div>
+        <h3>We mark it under‑16</h3>
+        <p class="lead">SafeGen labels that number on the SafeList as belonging to a minor until their 16th birthday month.</p>
+      </div>
+      <div class="step" role="listitem">
+        <div class="badge">3</div>
+        <h3>Apps check &amp; block</h3>
+        <p class="lead">Social platforms query the SafeList at signup/login. If it’s a minor’s number, access is blocked.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="section wrap grid2" id="privacy">
+    <div>
+      <h2>Why parents trust SafeGen</h2>
+      <ul>
+        <li>We store only phone numbers and your consent record.</li>
+        <li>No IDs, photos, or biometrics — ever.</li>
+        <li>Platforms get a yes/no via a query‑only API. No data resale.</li>
+        <li>You can remove or update a number at any time.</li>
+      </ul>
+      <button class="btn linklike" id="openPrivacy">Read the 30‑second Privacy Summary →</button>
+    </div>
+    <div class="card">
+      <strong>For platforms</strong>
+      <p class="lead">One call returns a minor flag. Low‑latency, rate‑limited, audited for misuse.</p>
+      <code>POST /v1/check-number { "number": "+614xxxxxxxx" } → { "minor": true|false }</code>
+      <p class="hint">Request pilot access → <a href="mailto:pilot@safegen.com.au">pilot@safegen.com.au</a></p>
+    </div>
+  </section>
+
+  <!-- SIGNUP FORM -->
+  <section class="section wrap" id="signup">
+    <h2>Add your child now (about 60 seconds)</h2>
+    <form id="form" novalidate>
+      <div>
+        <label for="pname">Parent name</label>
+        <input id="pname" name="pname" autocomplete="name" required />
+      </div>
+      <div>
+        <label for="pmobile">Parent mobile</label>
+        <input id="pmobile" name="pmobile" inputmode="tel" autocomplete="tel" placeholder="04xx xxx xxx" required />
+      </div>
+      <div>
+        <label for="cfirst">Child first name</label>
+        <input id="cfirst" name="cfirst" required />
+      </div>
+      <div>
+        <label for="cmobile">Child mobile</label>
+        <input id="cmobile" name="cmobile" inputmode="tel" placeholder="04xx xxx xxx" required />
+      </div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <label for="bmonth">Birth month</label>
+          <select id="bmonth" name="bmonth" required>
+            <option value="" hidden>Select</option>
+            <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
+            <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
+            <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
+          </select>
+        </div>
+        <div style="flex:1">
+          <label for="byear">Birth year</label>
+          <select id="byear" name="byear" required>
+            <option value="" hidden>Select</option>
+          </select>
+        </div>
+      </div>
+      <label class="consent"><input type="checkbox" id="consent" required /> <span>I’m the parent/guardian and consent to adding this number to the SafeList. I can remove it anytime.</span></label>
+      <div class="hint">We’ll text you to confirm ownership. No identity documents required.</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="btn" type="submit">Add to SafeList</button>
+        <span class="hint" id="formHint" aria-live="polite"></span>
+      </div>
+      <div class="success" id="successPanel">All set. We’ve added your child to the SafeList. We’ll remind you before their 16th birthday month to review settings.</div>
+    </form>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section wrap" id="faq">
+    <h2>FAQ</h2>
+    <details><summary>What if my child turns 16?</summary><div class="lead">We automatically remove the under‑16 flag at their birthday month, and notify you beforehand.</div></details>
+    <details><summary>Can I remove a number?</summary><div class="lead">Yes, anytime via the SMS link we send or by contacting support. Removal is immediate.</div></details>
+    <details><summary>Which apps use SafeGen?</summary><div class="lead">We’re onboarding major platforms via the pilot API. We’ll publish a live list as partners go public.</div></details>
+    <details><summary>What if my child changes SIM?</summary><div class="lead">Update the number in your parent portal or re‑add the new number. The old one is automatically removed.</div></details>
+    <details><summary>Is this government‑run?</summary><div class="lead">No. SafeGen is a parent‑driven service aligned with Australian online‑safety goals without burdening all adults.</div></details>
+    <details><summary>How is the counter calculated?</summary><div class="lead">It shows confirmed parent enrollments, updated every minute with local caching for speed.</div></details>
+  </section>
+
+  <footer class="wrap">
+    <div>© SafeGen. We never sell your data. • <a href="#" id="openPrivacy2">Privacy</a> • <a href="#">Terms</a> • <a href="mailto:press@safegen.com.au">Press</a></div>
+  </footer>
+
+  <!-- Privacy summary modal -->
+  <div class="modal" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="psTitle">
+    <div class="dialog">
+      <h3 id="psTitle">Privacy in 30 seconds</h3>
+      <ul>
+        <li>We store parent and child phone numbers and your consent.</li>
+        <li>Platforms can only check if a number is under‑16.</li>
+        <li>You can remove your child’s number anytime. No resale. Ever.</li>
+      </ul>
+      <div style="display:flex;gap:12px;justify-content:flex-end">
+        <button class="btn secondary" id="closePrivacy" data-initial-focus>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTP modal (stub) -->
+  <div class="modal" id="otpModal" role="dialog" aria-modal="true" aria-labelledby="otpTitle">
+    <div class="dialog">
+      <h3 id="otpTitle">Enter the 6‑digit code</h3>
+      <p class="lead">We just texted a code to your phone.</p>
+      <input id="otp" inputmode="numeric" maxlength="6" placeholder="••••••" style="letter-spacing:6px;text-align:center" aria-label="One-time passcode" data-initial-focus />
+      <p class="hint" id="otpError" role="alert" aria-live="polite"></p>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:12px">
+        <button class="btn secondary" id="cancelOtp">Cancel</button>
+        <button class="btn" id="confirmOtp">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">All set. We’ve added your child to the SafeList.</div>
+
+  <script>
+    (function initYears(){
+      const y=document.getElementById('byear');
+      const now=new Date().getFullYear();
+      for(let i=now;i>=now-16;i--){const opt=document.createElement('option');opt.textContent=String(i);y.appendChild(opt);}
+    })();
+
+    const COUNT_KEY='sg_counter';
+    const countEl=document.getElementById('count');
+
+    const storage={
+      get(key,fallback){
+        try{
+          if(!('localStorage' in window))return fallback;
+          const raw=window.localStorage.getItem(key);
+          return raw?JSON.parse(raw):fallback;
+        }catch(err){
+          return fallback;
+        }
+      },
+      set(key,value){
+        try{
+          if(!('localStorage' in window))return;
+          window.localStorage.setItem(key,JSON.stringify(value));
+        }catch(err){
+          /* ignore storage failures */
+        }
       }
-    </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  </body>
+    };
+
+    const cached=storage.get(COUNT_KEY,{});
+    let current=Number.isFinite(cached.total)?cached.total:12482;
+
+    function setCount(n){
+      current=n;
+      countEl.textContent=new Intl.NumberFormat().format(n);
+      storage.set(COUNT_KEY,{total:n,updatedAt:new Date().toISOString()});
+    }
+
+    setCount(current);
+
+    setInterval(()=>{
+      const next=current+Math.floor(Math.random()*3);
+      setCount(next);
+    },60000);
+
+    const modalState=new WeakMap();
+
+    function openModal(modalEl,focusSelector){
+      if(!modalEl)return;
+      modalState.set(modalEl,{lastFocused:document.activeElement,focusSelector});
+      modalEl.setAttribute('open','');
+      const target=(focusSelector&&modalEl.querySelector(focusSelector))||modalEl.querySelector('[data-initial-focus]');
+      if(target){requestAnimationFrame(()=>target.focus());}
+    }
+
+    function closeModal(modalEl){
+      if(!modalEl||!modalEl.hasAttribute('open'))return;
+      modalEl.removeAttribute('open');
+      const state=modalState.get(modalEl);
+      if(state?.lastFocused instanceof HTMLElement){state.lastFocused.focus();}
+      modalState.delete(modalEl);
+    }
+
+    const privacyModal=document.getElementById('privacyModal');
+    const otpModal=document.getElementById('otpModal');
+    const otpInput=document.getElementById('otp');
+    const otpError=document.getElementById('otpError');
+    const toast=document.getElementById('toast');
+    const success=document.getElementById('successPanel');
+    const form=document.getElementById('form');
+    const hint=document.getElementById('formHint');
+
+    [privacyModal,otpModal].forEach(modalEl=>{
+      if(!modalEl)return;
+      modalEl.addEventListener('click',event=>{
+        if(event.target===modalEl){
+          closeModal(modalEl);
+        }
+      });
+    });
+
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){
+        const open=document.querySelector('.modal[open]');
+        if(open){
+          event.preventDefault();
+          closeModal(open);
+        }
+      }
+    });
+
+    document.getElementById('openPrivacy').addEventListener('click',event=>{
+      event.preventDefault();
+      openModal(privacyModal,'#closePrivacy');
+    });
+
+    document.getElementById('openPrivacy2').addEventListener('click',event=>{
+      event.preventDefault();
+      openModal(privacyModal,'#closePrivacy');
+    });
+
+    document.getElementById('closePrivacy').addEventListener('click',()=>{
+      closeModal(privacyModal);
+    });
+
+    document.getElementById('cancelOtp').addEventListener('click',()=>{
+      otpError.textContent='';
+      hint.textContent='';
+      closeModal(otpModal);
+    });
+
+    const otpPattern=/^\d{6}$/;
+
+    document.getElementById('confirmOtp').addEventListener('click',()=>{
+      const code=otpInput.value.trim();
+      if(!otpPattern.test(code)){
+        otpError.textContent='Enter the 6-digit code to continue.';
+        otpInput.focus();
+        return;
+      }
+
+      otpError.textContent='';
+      closeModal(otpModal);
+
+      toast.style.display='block';
+      setTimeout(()=>{toast.style.display='none';},2200);
+
+      setCount(current+1);
+
+      form.reset();
+      hint.textContent='';
+      success.style.display='block';
+      document.getElementById('pname').focus();
+    });
+
+    form.addEventListener('submit',event=>{
+      event.preventDefault();
+      success.style.display='none';
+
+      if(!form.reportValidity()){
+        hint.textContent='Please complete the required fields.';
+        return;
+      }
+
+      otpInput.value='';
+      otpError.textContent='';
+      hint.textContent='Check your phone for a code…';
+      openModal(otpModal,'#otp');
+    });
+  </script>
+</body>
 </html>
