@@ -1,149 +1,73 @@
+# SafeGen
+
+**A parent-driven service for checking whether a child's phone number is registered on major social-media platforms.**
+
+SafeGen gives parents a simple, privacy-respecting way to find out where their child's phone number is already being used online — and to build auditable evidence that platforms have not removed underage accounts they were notified about.
+
 ---
-description: >-
-  SafeGen provides a national, privacy-preserving age-assurance architecture
-  enabling platforms, telcos, ISPs, and app stores to enforce under-age
-  protections without IDs, biometrics, or data sharing.
+
+## The Problem
+
+Social media platforms are required to protect children, but they cannot reliably detect underage users at scale. Face-based age verification is impractical for daily use and easy to circumvent. Telco-based approaches cannot distinguish between family-plan secondary lines, business lines, and genuine child accounts.
+
+Meanwhile, 3,873 mobile numbers are definitively used by children, with zero cross-checks against social media platforms.
+
+SafeGen proposes a different approach: **don't try to verify everyone. Build the registry of known child numbers. Let platforms query it.**
+
 ---
 
-# 1. Overview
+## How It Works
 
-***
+1. **Parent verifies number ownership** — a validation message is sent to the phone; the parent confirms physical possession. Combined with a legal notice that the parent is the authorised enquirer.
+2. **SafeGen checks major social platforms** — the service queries whether the number is registered on major social-media platforms.
+3. **Per-platform status is returned**:
+   - Account present → hazard alert.
+   - No account found → confirmed clear.
+   - Unknown → platform-dependent uncertainty.
+4. **Parent registry** — parent-tagged child numbers form a registry that can be audited by regulators (proposed: Office of eSafety).
+5. **Return check** — parents can re-check using the child's phone at any time, with no login required.
 
-### **Executive Summary**
+---
 
-SafeGen solves the age-assurance problem **across multiple enforcement scenarios** without IDs, biometrics, face scans, documents, or identity exchange.
+## Why It's Different
 
-At its core, SafeGen creates a **privacy-clean safelist**: a set of mobile numbers that are known—via parent enrolment or telco-verified attributes—to be used by minors.\
-The safelist is **hashed, salted, and non-identifying**.\
-Platforms only ever see a **one-bit answer**: _“minor: yes/no.”_
+- **No face scanning** — SafeGen does not require biometrics, live photos, or identity documents.
+- **No telco dependency** — v1 works without telecom integration.
+- **Privacy-preserving** — parent email addresses stored with one-way retrieval; accessible only by the designated audit authority.
+- **Cost-competitive** — current age-verification methods cost $1.50–$3.20 per check. SafeGen's model targets a fraction of that cost at scale.
 
-SafeGen is modular. It works as:
+---
 
-* A **standalone parent-driven service**
-* A **telco-integrated consent and age-attribute pipeline**
-* An **ISP / telco-ISP enforcement rail for network blocking**
-* An **App-store eligibility layer**
-* A **unified, privacy-preserving compliance mechanism** for online platforms of any type
+## Patent
 
-All without identity leakage, surveillance risk, or data sharing between institutions.
+SafeGen's technology is covered by three patents, held by SafeGen as a company. IP is held inside AAV Trust.
 
-***
+---
 
-### **The Problem SafeGen Solves**
+## Commercial Model
 
-Every actor in the ecosystem is stuck:
+- API pricing: **$0.01 per call**, first 10,000 free, no credit card required.
+- Vendor entity: **R2 Labs Pty Ltd**.
+- National licensing model available for government / platform operators.
 
-* Platforms can’t reliably know which users are minors.
-* Telcos legally can’t share customer age data.
-* ISPs can’t differentiate adult vs minor traffic.
-* App stores can’t check age without extracting ID or biometrics.
-* Parents have no safe, central way to declare their children as under-age across the whole digital ecosystem.
+---
 
-SafeGen fixes the coordination problem with **no raw identity shared between institutions and only salted hashes at rest**.
+## Regulatory Context
 
-***
+SafeGen is designed to complement Australia's eSafety Age-Restricted Material Codes (effective March 2026) and aligns with international momentum on platform accountability for under-age access.
 
-### **High-Level Architecture Snapshot**
+---
 
-SafeGen supports four core operational modes.\
-Each uses the same privacy-clean architecture.\
-Each produces the same anonymous output: _minor = yes/no_.
+## Current State
 
-***
+Post-pivot design. Original Camara telco approach evaluated and superseded by the parent-driven model. Architecture defined. Commercial and government engagement ongoing.
 
-## **1. Standalone Parent-Enrolled SafeList**
+---
 
-Parents can enrol:
+## Inventor
 
-* themselves
-* and their children
+**Ric Richardson** — `ricricho@gmail.com`
 
-using a simple two-step process:
+---
 
-1. Parent verifies their own phone.
-2. Parent physically accesses the child’s phone to enter a one-time PIN.
-
-SafeGen then:
-
-* **Hashes/salts** the child’s number.
-* **Hashes** month/year for automatic delisting at 16 and 18.
-* Stores **only the scrambled representations**.
-
-This safelist can be safely exposed to:
-
-* social platforms
-* adult content sites
-* online services
-
-Platforms submit a hashed number → receive _“minor: yes/no.”_\
-They never see an identity. SafeGen never stores an identity.
-
-***
-
-## **2. Telco-Integrated SafeList Expansion**
-
-Telcos already hold **KYC-verified subscriber information, including age or DOB for most services**.
-
-SafeGen gives telcos two simple functions:
-
-1. **Approach their own customers for consent** (via SMS/app).
-2. **Provide pre-hashed, salted mobile numbers** representing minors.
-
-No **raw identifiers** (names, numbers, DOBs) ever leave the telco — only salted hashes and signed attributes.\
-Only scrambled, signed, non-identifying records enter SafeGen.
-
-This creates the **most accurate, population-wide under-16 dataset** without any data sharing.
-
-***
-
-## **3. ISP / Telco-ISP Blocking for Child Devices**
-
-Telco-ISPs (mobile operators acting as ISPs) can use the SafeGen safelist to **block a child’s device** from accessing adult websites or services.
-
-How it works:
-
-* Telco-ISP knows a given SIM is associated with a hashed safelist entry.
-* Telco-ISP uses standard IP/domain blocking at the network edge.
-* No DPI. No app-fingerprinting. No identity leakage.
-* Just: _“this device is flagged as a minor → deny adult sites.”_
-
-This gives governments a true **network-level enforcement option** without **deep packet inspection or content monitoring**..
-
-***
-
-## **4. App Store Eligibility**
-
-App stores can check eligibility to install adult apps using the same safelist.
-
-Flow:
-
-* User attempts to download an 18+ app.
-* App store hashes the submitted mobile number (SMS verification already required).
-* App store queries SafeGen.
-* SafeGen returns _minor: yes/no_.
-
-No identity. No date of birth. No biometrics.\
-Just a one-bit compliance check.
-
-This solves a major blind spot:\
-children installing adult apps even when the OS/app store claims age controls.
-
-***
-
-### **Why This Works**
-
-Across all scenarios, SafeGen uses the same principles:
-
-* **Zero identity exchange**
-* **Zero biometrics**
-* **Zero document uploads**
-* **No raw telco data disclosure**
-* **No&#x20;**_**practical**_**&#x20;re-identification vector assuming salts/keys are protected**
-* **Signed, verifiable, one-bit age assertions**
-* **Automatic delisting at 16 and removal at 18**
-
-SafeGen becomes the **neutral, privacy-clean layer** the entire ecosystem has been missing for a decade.
-
-***
-
-If you want, I’ll write **the Core Architecture page next** — sharp, technical, regulator-ready.
+> *"Stop trying to verify everyone. Just block the known minors. The database is the product."*
