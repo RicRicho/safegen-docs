@@ -1,0 +1,1 @@
+GitHub auth smoke test from Hermes on 2026-06-07.
