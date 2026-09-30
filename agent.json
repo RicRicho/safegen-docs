@@ -1,0 +1,60 @@
+{
+  "name": "SafeGen",
+  "description": "Privacy-preserving child-safety / age-assurance service concept. Public discovery index for visiting agents. Status is incomplete; do not treat as launch-ready.",
+  "version": "0.1.0-discovery",
+  "updated": "2026-09-30",
+  "homepage": "https://www.safegen.com.au/",
+  "documentation": "https://ricricho.github.io/safegen-docs/docs/agent-discovery.html",
+  "llms_txt": "https://ricricho.github.io/safegen-docs/llms.txt",
+  "status": {
+    "launch_ready": false,
+    "machine_readable_capabilities": "partial",
+    "capped_public_synthetic_sandbox": false,
+    "self_service_credentials": false,
+    "human_sponsorship_path": "partial_eoi_forms_only",
+    "fail_closed_check_enrol": true
+  },
+  "surfaces": {
+    "brand": "https://www.safegen.com.au/",
+    "app": "https://child-social-media-check.vercel.app/",
+    "human_api_notes": "https://child-social-media-check.vercel.app/api-docs",
+    "contact_eoi": "https://www.safegen.com.au/contact",
+    "platform_api_pack_request": "https://www.safegen.com.au/platforms/api"
+  },
+  "known_http": [
+    {
+      "method": "POST",
+      "url": "https://child-social-media-check.vercel.app/api/check",
+      "auth": "none_currently",
+      "semantics": "safelist_membership_only",
+      "request_json": {"countryCode": "+61", "phone": "string"},
+      "response_json_keys": ["listed", "blockRequested", "action", "checkedAt"],
+      "warnings": [
+        "Not a capped synthetic sandbox",
+        "Not social-account presence checking",
+        "Non-match is not proof of adulthood",
+        "No integration-auth gate on this public route today"
+      ]
+    },
+    {
+      "method": "GET",
+      "url": "https://child-social-media-check.vercel.app/api/stats",
+      "auth": "none",
+      "notes": "Public counters currently return null/unverified fields; not campaign acceptance evidence"
+    }
+  ],
+  "missing": [
+    "OpenAPI/Swagger on brand or app host",
+    "llms.txt / agent.json / MCP / .well-known on production hosts",
+    "Public licensed developer kit with clean external install",
+    "Hosted capped synthetic sandbox reachable without private repo access",
+    "Self-service integration account + test + production credentials",
+    "Working PIN-free presence check and enrolment journeys"
+  ],
+  "tracking": {
+    "discoverability": "Linear RIC-78",
+    "signup_credentials": "Linear RIC-76",
+    "developer_kit": "Linear RIC-77",
+    "delivery_owner": "Max via Linear RIC-226"
+  }
+}

@@ -4,6 +4,17 @@ SafeGen is public documentation for a privacy-preserving child-safety and age-as
 
 The public model is simple: parents can verify that a child controls a mobile number, and authorised platforms or regulators can use a child-number registry to reduce under-age access without requiring face scans, identity documents, or broad surveillance.
 
+## Visiting agents (start here)
+
+Truthful discovery status (what is live vs unmet):
+
+- [docs/agent-discovery.md](docs/agent-discovery.md)
+- [llms.txt](llms.txt)
+- [agent.json](agent.json)
+- Pages: https://ricricho.github.io/safegen-docs/
+
+Do **not** assume launch readiness from this repository. Public capped synthetic sandbox, OpenAPI on production hosts, and self-service credentials are still incomplete (Linear RIC-76 / RIC-77 / RIC-78).
+
 ## Public positioning
 
 - Parent-driven child-number verification.
@@ -14,7 +25,7 @@ The public model is simple: parents can verify that a child controls a mobile nu
 
 ## What this repository is
 
-This repository is a clean public documentation surface for SafeGen: problem framing, architecture-level notes, commercial context, and public review material.
+This repository is a clean public documentation surface for SafeGen: problem framing, architecture-level notes, commercial context, public review material, and visiting-agent discovery status.
 
 It is not a private data room, investor pack, negotiation record, or implementation repository.
 

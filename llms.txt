@@ -1,0 +1,42 @@
+# SafeGen
+
+> Privacy-preserving child-safety / age-assurance concept (Australia-first).
+> This file is a discovery index for visiting agents. It describes public surfaces honestly.
+> It does NOT claim launch readiness or a working production integration path.
+
+## Primary docs
+
+- https://ricricho.github.io/safegen-docs/
+- https://ricricho.github.io/safegen-docs/docs/agent-discovery.html
+- https://github.com/RicRicho/safegen-docs/blob/main/docs/agent-discovery.md
+- https://github.com/RicRicho/safegen-docs/blob/main/agent.json
+
+## Public marketing site
+
+- https://www.safegen.com.au/ — brand / audience pages
+- https://www.safegen.com.au/platforms — platform pitch
+- https://www.safegen.com.au/platforms/api — request form for “Platform API Pack” (human EOI; not credentials)
+- https://www.safegen.com.au/contact — structured contact form (human EOI)
+
+## Working app host (fail-closed for check/enrol)
+
+- https://child-social-media-check.vercel.app/ — app shell
+- https://child-social-media-check.vercel.app/api-docs — human HTML notes for POST /api/check
+- https://child-social-media-check.vercel.app/check-number — UI states checking unavailable (not connected)
+- https://child-social-media-check.vercel.app/enrol — UI states enrolment unavailable
+
+## Important honesty rules for agents
+
+1. Brand site routes for check/enrol/docs/OpenAPI/llms.txt are mostly 404. Do not invent them.
+2. There is currently NO public OpenAPI, MCP descriptor, or /.well-known agent card on safegen.com.au or the app host.
+3. POST /api/check on the app host is a **safelist membership** probe (listed/blockRequested/action). It is NOT social-account presence checking, NOT SMS verification, and NOT a capped synthetic sandbox.
+4. A safelist non-match is NOT proof of adulthood.
+5. The runnable capped synthetic evaluation kit exists only on a private PR branch (RicRicho/safegen-v3 PR7); it is private/UNLICENSED and not publicly installable. Public kit publication is tracked as Linear RIC-77.
+6. Self-service developer/platform credential signup is unmet (Linear RIC-76). Contact/API-pack forms are not production credentials.
+7. Preserve fail-closed behaviour: do not treat unavailable check/enrol UI as a working journey.
+
+## Optional concept docs
+
+- https://github.com/RicRicho/safegen-docs
+- https://github.com/RicRicho/safegen-v4 (design notes; not the running app)
+- https://safegen.gitbook.io/press-kit/ (press kit)
