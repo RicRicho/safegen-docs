@@ -1,7 +1,7 @@
 # SafeGen visiting-agent discovery status
 
-**Updated:** 30 September 2026 (Australia/Sydney)  
-**Owner:** Max (Linear RIC-226 / RIC-78)  
+**Updated:** 10 October 2026 (Australia/Sydney)  
+**Owner:** Sam, SafeGen manager (Linear RIC-226 / RIC-78)  
 **Purpose:** Truthful public inventory so a cold agent can find what exists **without private guidance**, and can tell its human what is still broken.
 
 This page prefers truth over theatre. It does **not** claim October 4 launch acceptance.
@@ -11,7 +11,7 @@ This page prefers truth over theatre. It does **not** claim October 4 launch acc
 | Gate | Status |
 |---|---|
 | 1. Machine-readable capabilities, auth, limits, schemas, sandbox instructions published where a visiting agent can find them without private guidance | **Partial / unmet on production hosts** — this docs repo now publishes `llms.txt` + `agent.json` + this page; brand/app still lack OpenAPI / well-known / MCP |
-| 2. Unfamiliar agent can discover the service, run a capped synthetic example, and explain the result without private guidance | **Unmet** — capped synthetic kit is private/UNLICENSED on `RicRicho/safegen-v3` PR7; not publicly installable. Live `POST /api/check` is not that sandbox |
+| 2. Unfamiliar agent can discover the service, run a capped synthetic example, and explain the result without private guidance | **Partial** — the capped synthetic evaluation kit is now public and MIT-licensed at https://github.com/RicRicho/safegen-evaluation-kit (release v0.1.0). It runs on loopback fixtures only. A cold-agent test against these public pages is still to be recorded. Live `POST /api/check` is not that sandbox |
 | 3. Human/organisation sponsorship path documented | **Partial** — brand contact + Platform API Pack request forms exist; no self-service path to test/production credentials (RIC-76) |
 
 ## Live surfaces (fresh probes 30 Sep 2026)
@@ -43,22 +43,31 @@ This page prefers truth over theatre. It does **not** claim October 4 launch acc
 |---|---|
 | https://github.com/RicRicho/safegen-docs + GitHub Pages | Public concept docs + **this discovery pack** |
 | https://github.com/RicRicho/safegen-v4 | Design/architecture notes; not the running app |
-| https://github.com/RicRicho/safegen-v3 | **Private** app repo; PR7 kit not public |
+| https://github.com/RicRicho/safegen-evaluation-kit | **Public, MIT** synthetic evaluation kit `@safegen/evaluation-kit` 0.1.0 (loopback fixtures only) |
+| https://github.com/RicRicho/safegen-v3 | **Private** app repo |
 | https://safegen.gitbook.io/press-kit/ | Press kit |
 
-## Synthetic example path (attempted)
+## Synthetic example path (public)
 
-**Public cold path:** FAIL for RIC-78 gate 2.
+The capped loopback synthetic evaluation kit `@safegen/evaluation-kit` 0.1.0 is public under the MIT licence:
 
-Exact blocker: the capped loopback synthetic evaluation kit (`@safegen/evaluation-kit` 0.1.0) lives on private branch `codex/sdk-evaluation-kit` / [PR7](https://github.com/RicRicho/safegen-v3/pull/7), package `private:true` / `UNLICENSED`. A visiting agent without private GitHub access cannot install or run it from public docs alone.
+- Repo: https://github.com/RicRicho/safegen-evaluation-kit
+- Release tarball: https://github.com/RicRicho/safegen-evaluation-kit/releases/tag/v0.1.0
 
-**Authenticated Max verification (not cold-agent proof):** downloaded PR7 `sdk/` and ran locally on 30 Sep 2026:
+Run it without any private access:
 
-- `node example.mjs` — match / no-match / no-block / unknown / error fixtures printed as expected
-- `node --test test.mjs` — **9/9 pass**
-- Sandbox is loopback-only, fixture phones only, default quota 30 requests
+```sh
+git clone https://github.com/RicRicho/safegen-evaluation-kit.git
+cd safegen-evaluation-kit
+node --test test.mjs   # expect 12/12 pass
+node example.mjs       # prints match / no-match / no-block / unknown / error decisions
+```
 
-This proves the kit exists for owners; it does **not** satisfy “without private guidance”.
+What it shows: how a platform should read a SafeGen check result. `match` with a block request means reject; `no_match` or a match without a block request means carry on with your other checks; `unknown` or `error` means hold for retry or review (fail closed). The sandbox binds only to `127.0.0.1`, uses fixture phone numbers only, has a lifetime quota of 30 requests and a 1 KiB body limit, and makes no calls to SafeGen, Twilio or any social platform.
+
+Verified 10 Oct 2026 (Sydney) from a clean public clone: 12/12 tests pass and the example prints all five fixture decisions.
+
+What it does **not** show: real-service or real-phone behaviour, or launch readiness.
 
 **Do not substitute** live `POST /api/check` for the capped synthetic sandbox. That route is a live safelist membership probe.
 
@@ -78,16 +87,17 @@ Documented today:
 
 Tracked as **RIC-76**. A request form alone is explicitly insufficient for that ticket.
 
-## What Max can do next without waiting on Ric
+## Next steps (no wait on Ric)
 
 1. Keep this discovery pack accurate as RIC-76/77 move.
-2. After RIC-77 publishes a licensed public kit: add install URL + sandbox instructions here and on app `/api-docs`.
-3. Add production-host `llms.txt` / OpenAPI / agent card **only** when they describe real working routes (no fake green).
-4. Wire brand/app discovery links to this docs pack once ready.
-5. Do not reopen fail-closed check/enrol until RIC-81 evidence exists.
+2. Link the public kit from the app's `/api-docs` page as well (app changes follow the current live-site hold).
+3. Record a cold visiting-agent run that starts from these public pages only.
+4. Add production-host `llms.txt` / OpenAPI / agent card **only** when they describe real working routes (no fake green).
+5. Wire brand/app discovery links to this docs pack once ready.
+6. Keep check/enrol fail-closed until real-phone evidence exists.
 
 ## Dependencies
 
 - **RIC-76** — platform + developer self-service signup / credentials
-- **RIC-77** — publish developer kit with working example (due 2026-10-04)
-- Coordinates under **RIC-226** (Max delivery owner). Jenny hibernated — do not assign her.
+- **RIC-77** — developer kit with working example (public kit released 30 Sep 2026)
+- Coordinates under **RIC-226** (Sam delivery owner since 7 Oct 2026). Jenny hibernated — do not assign her.

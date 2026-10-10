@@ -31,9 +31,14 @@
 2. There is currently NO public OpenAPI, MCP descriptor, or /.well-known agent card on safegen.com.au or the app host.
 3. POST /api/check on the app host is a **safelist membership** probe (listed/blockRequested/action). It is NOT social-account presence checking, NOT SMS verification, and NOT a capped synthetic sandbox.
 4. A safelist non-match is NOT proof of adulthood.
-5. The runnable capped synthetic evaluation kit exists only on a private PR branch (RicRicho/safegen-v3 PR7); it is private/UNLICENSED and not publicly installable. Public kit publication is tracked as Linear RIC-77.
+5. The runnable capped synthetic evaluation kit is public (MIT): https://github.com/RicRicho/safegen-evaluation-kit (release v0.1.0). Clone it, run `node --test test.mjs` (12 tests) and `node example.mjs`. Loopback fixtures only; it is not real-service or real-phone evidence.
 6. Self-service developer/platform credential signup is unmet (Linear RIC-76). Contact/API-pack forms are not production credentials.
 7. Preserve fail-closed behaviour: do not treat unavailable check/enrol UI as a working journey.
+
+## Evaluation kit
+
+- https://github.com/RicRicho/safegen-evaluation-kit
+- https://github.com/RicRicho/safegen-evaluation-kit/releases/tag/v0.1.0
 
 ## Optional concept docs
 
