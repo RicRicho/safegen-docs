@@ -1,103 +1,88 @@
-# SafeGen visiting-agent discovery status
+# SafeGen visiting-agent discovery
 
-**Updated:** 10 October 2026 (Australia/Sydney)  
-**Owner:** Sam, SafeGen manager (Linear RIC-226 / RIC-78)  
-**Purpose:** Truthful public inventory so a cold agent can find what exists **without private guidance**, and can tell its human what is still broken.
+**Updated:** 20 October 2026 (Australia/Sydney)
+**Owner:** Sam, SafeGen manager (Linear RIC-226 / RIC-78)
+**Purpose:** a plain public guide so an agent that has never seen SafeGen can find the service, try it with test data, and explain the result to its human, with no private help.
 
-This page prefers truth over theatre. It does **not** claim October 4 launch acceptance.
+## What SafeGen offers platforms
 
-## Gate summary (RIC-78)
+SafeGen keeps a register of phone numbers that parents have put on the Safe List because they belong to a child. A platform calls SafeGen at sign-up, before it creates an account, and asks whether the phone number is on the register and whether the parent asked for it to be blocked.
 
-| Gate | Status |
+- Live site: https://www.safegen.com.au/
+- Platform guide (human-readable): https://www.safegen.com.au/api-docs
+- Developer sign-up (self-serve test key): https://www.safegen.com.au/developers/sign-up
+
+## Step 1: get a test key (self-serve)
+
+Fill in the form at https://www.safegen.com.au/developers/sign-up, or call it directly:
+
+```sh
+curl -X POST https://www.safegen.com.au/api/integrations/signup \
+  -H "Content-Type: application/json" \
+  -d '{"orgName":"Your organisation","contactName":"Your name","contactEmail":"you@example.com","website":"https://example.com"}'
+```
+
+`orgName` is required. The reply contains a test key starting `sg_test_`. Keep it secret.
+
+## Step 2: run a check with test data
+
+Every check needs the key. A call without one is refused with `401` and a message pointing to the sign-up page.
+
+```sh
+curl -X POST https://www.safegen.com.au/api/check \
+  -H "Authorization: Bearer sg_test_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"countryCode":"+61","phone":"fixture:match"}'
+```
+
+Test keys accept only practice values (`fixture:match`, `fixture:no-match`, `fixture:no-block`, `fixture:unknown`, `fixture:error`) and are rate limited per hour. They never look up real numbers.
+
+Reply fields:
+
+| Field | Meaning |
 |---|---|
-| 1. Machine-readable capabilities, auth, limits, schemas, sandbox instructions published where a visiting agent can find them without private guidance | **Partial / unmet on production hosts** — this docs repo now publishes `llms.txt` + `agent.json` + this page; brand/app still lack OpenAPI / well-known / MCP |
-| 2. Unfamiliar agent can discover the service, run a capped synthetic example, and explain the result without private guidance | **Partial** — the capped synthetic evaluation kit is now public and MIT-licensed at https://github.com/RicRicho/safegen-evaluation-kit (release v0.1.0). It runs on loopback fixtures only. A cold-agent test against these public pages is still to be recorded. Live `POST /api/check` is not that sandbox |
-| 3. Human/organisation sponsorship path documented | **Partial** — brand contact + Platform API Pack request forms exist; no self-service path to test/production credentials (RIC-76) |
+| `listed` | the number is on the register (`null` when the answer is inconclusive) |
+| `blockRequested` | the parent asked platforms to block this number |
+| `action` | `reject` when listed with a block request; `allow` otherwise; `unknown` when inconclusive |
+| `checkedAt` | time of the check |
 
-## Live surfaces (fresh probes 30 Sep 2026)
+How to explain the result: `reject` means do not create the account; `allow` means carry on with your other checks (a number not on the list is not proof the person is an adult); `unknown` or an error means hold the sign-up for retry or review.
 
-### Brand — `https://www.safegen.com.au`
+## Step 3: move to production
 
-| URL | Result | Cold-agent useful? |
-|---|---|---|
-| `/` | 200 marketing homepage | Human marketing only |
-| `/platforms`, `/platforms/api`, `/contact`, `/about`, audience pages | 200 | Pitch + EOI forms; **not** credentials |
-| `/llms.txt`, `/.well-known/*`, `/openapi.json`, `/docs`, `/developers`, `/api/*`, `/check*`, `/enrol` | 404 (HTML) | No |
-| Live Demo link → `https://demo.safegen.com.au/` | 200 tiny SPA stub (stale) | Not a usable API/docs surface |
+With a test key, request production access:
 
-### App — `https://child-social-media-check.vercel.app`
+```
+POST https://www.safegen.com.au/api/integrations/request-production
+Authorization: Bearer sg_test_YOUR_KEY
+```
 
-| URL | Result | Cold-agent useful? |
-|---|---|---|
-| `/` | 200 app shell; links to check/enrol/api-docs | Navigation only |
-| `/api-docs` | 200 **human HTML** describing `POST /api/check` | Partial — readable, not machine schema |
-| `POST /api/check` | 200 JSON safelist probe (`listed`, `blockRequested`, `action`, `checkedAt`) | Partial — callable, but **not** capped synthetic sandbox; no auth gate today |
-| `GET /api/stats` | 200 JSON with null/unverified counters | Not acceptance evidence |
-| `/check-number`, `/enrol` | 200 UI fail-closed (“service is not connected” / enrolment unavailable) | Explains unavailability correctly |
-| `/api/check-number`, `/api/enrol` | 404 | No |
-| `/llms.txt`, OpenAPI, MCP, agent cards, `/developers`, `/signup` | 404 | No |
+SafeGen reviews the organisation and then issues a production key, which performs real register lookups.
 
-### Public repos / pages
+## Offline practice kit (no key, no network)
 
-| Surface | Notes |
-|---|---|
-| https://github.com/RicRicho/safegen-docs + GitHub Pages | Public concept docs + **this discovery pack** |
-| https://github.com/RicRicho/safegen-v4 | Design/architecture notes; not the running app |
-| https://github.com/RicRicho/safegen-evaluation-kit | **Public, MIT** synthetic evaluation kit `@safegen/evaluation-kit` 0.1.0 (loopback fixtures only) |
-| https://github.com/RicRicho/safegen-v3 | **Private** app repo |
-| https://safegen.gitbook.io/press-kit/ | Press kit |
+For a fully offline trial there is a free, MIT-licensed practice kit:
 
-## Synthetic example path (public)
-
-The capped loopback synthetic evaluation kit `@safegen/evaluation-kit` 0.1.0 is public under the MIT licence:
-
-- Repo: https://github.com/RicRicho/safegen-evaluation-kit
-- Release tarball: https://github.com/RicRicho/safegen-evaluation-kit/releases/tag/v0.1.0
-
-Run it without any private access:
+- Repo: https://github.com/RicRicho/safegen-evaluation-kit (release v0.1.0)
 
 ```sh
 git clone https://github.com/RicRicho/safegen-evaluation-kit.git
 cd safegen-evaluation-kit
-node --test test.mjs   # expect 12/12 pass
-node example.mjs       # prints match / no-match / no-block / unknown / error decisions
+node --test test.mjs   # 12 tests
+node example.mjs       # prints the five practice outcomes and the right decision for each
 ```
 
-What it shows: how a platform should read a SafeGen check result. `match` with a block request means reject; `no_match` or a match without a block request means carry on with your other checks; `unknown` or `error` means hold for retry or review (fail closed). The sandbox binds only to `127.0.0.1`, uses fixture phone numbers only, has a lifetime quota of 30 requests and a 1 KiB body limit, and makes no calls to SafeGen, Twilio or any social platform.
+It runs only on your own machine (127.0.0.1), uses practice numbers only, allows 30 requests and 1 KiB bodies.
 
-Verified 10 Oct 2026 (Sydney) from a clean public clone: 12/12 tests pass and the example prints all five fixture decisions.
+## Other public pages
 
-What it does **not** show: real-service or real-phone behaviour, or launch readiness.
+- Scoreboard: https://www.safegen.com.au/scoreboard
+- Public counters (JSON): https://www.safegen.com.au/api/stats
+- Concept docs: https://ricricho.github.io/safegen-docs/
+- Press kit: https://safegen.gitbook.io/press-kit/
 
-**Do not substitute** live `POST /api/check` for the capped synthetic sandbox. That route is a live safelist membership probe.
+## Checked 20 October 2026 (Sydney)
 
-## Sponsorship / human org onboarding
+From a clean machine with no SafeGen or GitHub login: the live site, platform guide and developer sign-up page all load; `POST /api/check` without a key returns `401` with sign-up guidance; the sign-up route answers (an empty request returns `org_name_required`); the production request route requires a key; and the offline kit passes 12 of 12 tests and prints all five outcomes.
 
-Documented today:
-
-1. https://www.safegen.com.au/contact — structured EOI form to “SafeGen Standards Team”
-2. https://www.safegen.com.au/platforms/api — “Request Platform API Pack” form (docs/examples/compliance materials request)
-
-**Not documented / not working as acceptance requires:**
-
-- Self-service integration-account creation
-- Immediate test credentials
-- Documented usable path to authorised production credentials
-- Machine-readable auth/limits for production checks
-
-Tracked as **RIC-76**. A request form alone is explicitly insufficient for that ticket.
-
-## Next steps (no wait on Ric)
-
-1. Keep this discovery pack accurate as RIC-76/77 move.
-2. Link the public kit from the app's `/api-docs` page as well (app changes follow the current live-site hold).
-3. Record a cold visiting-agent run that starts from these public pages only.
-4. Add production-host `llms.txt` / OpenAPI / agent card **only** when they describe real working routes (no fake green).
-5. Wire brand/app discovery links to this docs pack once ready.
-6. Keep check/enrol fail-closed until real-phone evidence exists.
-
-## Dependencies
-
-- **RIC-76** — platform + developer self-service signup / credentials
-- **RIC-77** — developer kit with working example (public kit released 30 Sep 2026)
-- Coordinates under **RIC-226** (Sam delivery owner since 7 Oct 2026). Jenny hibernated — do not assign her.
+Still to do: a published machine-readable description (OpenAPI) and `llms.txt` on www.safegen.com.au itself.

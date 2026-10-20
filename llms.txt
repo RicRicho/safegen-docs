@@ -1,47 +1,27 @@
 # SafeGen
 
-> Privacy-preserving child-safety / age-assurance concept (Australia-first).
-> This file is a discovery index for visiting agents. It describes public surfaces honestly.
-> It does NOT claim launch readiness or a working production integration path.
+> SafeGen keeps a register of Australian phone numbers that parents have put on the Safe List because they belong to a child. Platforms check a number at sign-up and refuse accounts the parent has asked to block.
 
-## Primary docs
+## Start here
 
-- https://ricricho.github.io/safegen-docs/
-- https://ricricho.github.io/safegen-docs/docs/agent-discovery.html
-- https://github.com/RicRicho/safegen-docs/blob/main/docs/agent-discovery.md
-- https://github.com/RicRicho/safegen-docs/blob/main/agent.json
+- https://ricricho.github.io/safegen-docs/docs/agent-discovery.html - step-by-step guide for visiting agents
+- https://www.safegen.com.au/api-docs - platform guide on the live site
+- https://www.safegen.com.au/developers/sign-up - self-serve test key
 
-## Public marketing site
+## API (live)
 
-- https://www.safegen.com.au/ — brand / audience pages
-- https://www.safegen.com.au/platforms — platform pitch
-- https://www.safegen.com.au/platforms/api — request form for “Platform API Pack” (human EOI; not credentials)
-- https://www.safegen.com.au/contact — structured contact form (human EOI)
+- POST https://www.safegen.com.au/api/integrations/signup - JSON {orgName (required), contactName, contactEmail, website}; returns a test key (sg_test_...)
+- POST https://www.safegen.com.au/api/check - header Authorization: Bearer <key>; JSON {countryCode, phone}; returns {listed, blockRequested, action, checkedAt}. Without a key: 401.
+- Test keys accept only fixture:match, fixture:no-match, fixture:no-block, fixture:unknown, fixture:error, and are rate limited per hour.
+- POST https://www.safegen.com.au/api/integrations/request-production - with a test key; SafeGen reviews the organisation, then issues a production key.
+- GET https://www.safegen.com.au/api/stats - public counters
 
-## Working app host (fail-closed for check/enrol)
+## Reading a result
 
-- https://child-social-media-check.vercel.app/ — app shell
-- https://child-social-media-check.vercel.app/api-docs — human HTML notes for POST /api/check
-- https://child-social-media-check.vercel.app/check-number — UI states checking unavailable (not connected)
-- https://child-social-media-check.vercel.app/enrol — UI states enrolment unavailable
+- action "reject": do not create the account.
+- action "allow": carry on with your other checks. Not being on the list is not proof of adulthood.
+- action "unknown" or an error: hold the sign-up for retry or review.
 
-## Important honesty rules for agents
+## Offline practice kit
 
-1. Brand site routes for check/enrol/docs/OpenAPI/llms.txt are mostly 404. Do not invent them.
-2. There is currently NO public OpenAPI, MCP descriptor, or /.well-known agent card on safegen.com.au or the app host.
-3. POST /api/check on the app host is a **safelist membership** probe (listed/blockRequested/action). It is NOT social-account presence checking, NOT SMS verification, and NOT a capped synthetic sandbox.
-4. A safelist non-match is NOT proof of adulthood.
-5. The runnable capped synthetic evaluation kit is public (MIT): https://github.com/RicRicho/safegen-evaluation-kit (release v0.1.0). Clone it, run `node --test test.mjs` (12 tests) and `node example.mjs`. Loopback fixtures only; it is not real-service or real-phone evidence.
-6. Self-service developer/platform credential signup is unmet (Linear RIC-76). Contact/API-pack forms are not production credentials.
-7. Preserve fail-closed behaviour: do not treat unavailable check/enrol UI as a working journey.
-
-## Evaluation kit
-
-- https://github.com/RicRicho/safegen-evaluation-kit
-- https://github.com/RicRicho/safegen-evaluation-kit/releases/tag/v0.1.0
-
-## Optional concept docs
-
-- https://github.com/RicRicho/safegen-docs
-- https://github.com/RicRicho/safegen-v4 (design notes; not the running app)
-- https://safegen.gitbook.io/press-kit/ (press kit)
+- https://github.com/RicRicho/safegen-evaluation-kit (MIT, v0.1.0): node --test test.mjs (12 tests), node example.mjs. Runs on 127.0.0.1 with practice numbers only.
